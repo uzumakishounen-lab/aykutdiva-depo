@@ -314,6 +314,99 @@ def aykut(mouth=0.0, blink=0.0, expr='sass', look=(0, 0), t=0.0):
         E(mx, my + h / 2 - 8, w * 0.55, 9 + 6 * mouth, fill=(240, 100, 130, 255))
     return L.resize((500, 600), Image.LANCZOS)
 
+CROC = (92, 186, 96); CROC_D = (54, 138, 72); CROC_L = (196, 232, 150); CROC_DD = (34, 96, 52)
+
+def aykut_croc(mouth=0.0, blink=0.0, expr='sass', look=(0, 0), t=0.0):
+    """500x600 RGBA diva timsah Aykut. expr: sass | shock | smug | kiss"""
+    S = 2; Wd, Hd = 500 * S, 600 * S
+    L = Image.new('RGBA', (Wd, Hd), (0, 0, 0, 0)); d = ImageDraw.Draw(L)
+    def E(cx, cy, rx, ry, **k): d.ellipse([(cx - rx) * S, (cy - ry) * S, (cx + rx) * S, (cy + ry) * S], **k)
+    # kuyruk (gövdenin arkasında, sallanır)
+    sway = math.sin(t * 2.6)
+    pts = []
+    for k in range(41):
+        u = k / 40
+        pts.append((370 + 105 * u, 600 - 130 * u * u + 35 * sway * u * u, 44 * (1 - 0.8 * u)))
+    for k in range(4, 40, 7):
+        x, y, r = pts[k]
+        d.polygon([((x - r * 0.35) * S, (y - r * 0.8) * S), ((x + r * 0.35) * S, (y - r * 0.8) * S), (x * S, (y - r * 1.25) * S)], fill=CROC_D + (255,))
+    for x, y, r in pts: E(x, y, r, r * 0.9, fill=CROC + (255,))
+    # gövde + boyun
+    d.rounded_rectangle([90 * S, 470 * S, 410 * S, 640 * S], 90 * S, fill=PURPLE + (255,))
+    d.rounded_rectangle([185 * S, 380 * S, 315 * S, 490 * S], 30 * S, fill=CROC_D + (255,))
+    # boa
+    for k in range(15):
+        a = math.pi * (0.05 + 0.9 * k / 14)
+        x = 250 - 175 * math.cos(a); y = 488 + 40 * math.sin(a) * 0.9 + 14 * math.sin(k * 1.7 + t * 3)
+        E(x, y, 38, 34, fill=(PINK if k % 2 else PINK_L) + (255,))
+    # kafa (kafatası) + yanak pulları
+    E(250, 240, 165, 110, fill=CROC + (255,))
+    for (sx, sy, r) in [(118, 222, 11), (138, 250, 9), (110, 255, 7), (382, 222, 11), (362, 250, 9), (390, 255, 7)]:
+        E(sx, sy, r, r, fill=CROC_D + (255,))
+    # altın küpe (yan tarafta)
+    d.ellipse([392 * S, 280 * S, 428 * S, 324 * S], outline=GOLD + (255,), width=7 * S)
+    # göz tümsekleri
+    for ex in (178, 322): E(ex, 168, 64, 62, fill=CROC + (255,))
+    # saç: kabarık perçem + pembe röfle
+    E(250, 84, 62, 38, fill=HAIR + (255,)); E(276, 68, 52, 36, fill=HAIR + (255,)); E(228, 74, 40, 30, fill=HAIR + (255,))
+    d.arc([212 * S, 36 * S, 336 * S, 120 * S], 200, 300, fill=PINK + (255,), width=12 * S)
+    d.arc([202 * S, 48 * S, 312 * S, 126 * S], 205, 290, fill=HAIR_L + (255,), width=6 * S)
+    # gözler
+    for i, ex in enumerate((178, 322)):
+        ey = 170; ry = 40 * (1 - 0.92 * blink)
+        if expr == 'shock': ry *= 1.15
+        E(ex, ey, 38, max(3, ry), fill=WHITE + (255,))
+        if blink < 0.6:
+            px = ex + look[0] * 12; py = ey + look[1] * 8 + 4
+            E(px, py, 19, min(22, ry * 0.65), fill=INK + (255,)); E(px + 7, py - 8, 6, 6, fill=WHITE + (255,))
+        sgn = -1 if i == 0 else 1
+        bx = ex + sgn * 36; by = ey - ry * 0.45
+        d.line([bx * S, by * S, (bx + sgn * 22) * S, (by - 14) * S], fill=INK + (255,), width=6 * S)
+        d.arc([(ex - 40) * S, (ey - ry - 2) * S, (ex + 40) * S, (ey + ry + 2) * S], 190, 350, fill=INK + (255,), width=6 * S)
+    # kaşlar
+    lift = {'sass': (24, 0), 'shock': (22, 22), 'smug': (4, 4), 'kiss': (12, 12)}[expr]
+    for i, ex in enumerate((178, 322)):
+        y = 138 - 0.6 * lift[i]
+        d.arc([(ex - 40) * S, (y - 18) * S, (ex + 40) * S, (y + 26) * S], 205, 335, fill=HAIR + (255,), width=11 * S)
+    # ağız / çeneler
+    jy = 352
+    if expr == 'shock' and mouth < 0.15: o = 50
+    elif mouth < 0.08: o = 0
+    else: o = 8 + 58 * mouth
+    if o > 0:
+        d.rounded_rectangle([168 * S, (jy - 20) * S, 332 * S, (jy + o + 30) * S], 30 * S, fill=(122, 16, 48, 255))
+        E(250, jy + o + 14, 54, 12 + 6 * mouth, fill=(240, 100, 130, 255))
+    # alt çene (üst çenenin altına oturur)
+    d.rounded_rectangle([150 * S, (jy - 30 + o) * S, 350 * S, (jy + 74 + o) * S], 56 * S, fill=CROC_L + (255,))
+    d.rounded_rectangle([150 * S, (jy - 30 + o) * S, 350 * S, (jy + 74 + o) * S], 56 * S, outline=CROC + (255,), width=6 * S)
+    lt = jy + o + 2
+    for k in range(6):
+        x = 192 + k * 23.3
+        d.polygon([((x - 7) * S, (lt + 4) * S), ((x + 7) * S, (lt + 4) * S), (x * S, (lt - 12) * S)], fill=WHITE + (255,))
+    # üst çene (burun) en üstte
+    d.rounded_rectangle([146 * S, 210 * S, 354 * S, jy * S], 70 * S, fill=CROC + (255,))
+    for k in range(7):
+        x = 180 + k * 23.3
+        d.polygon([((x - 8) * S, (jy - 6) * S), ((x + 8) * S, (jy - 6) * S), (x * S, (jy + 12) * S)], fill=WHITE + (255,))
+    E(222, 252, 15, 11, fill=CROC_D + (255,)); E(278, 252, 15, 11, fill=CROC_D + (255,))
+    E(222, 254, 6, 5, fill=CROC_DD + (255,)); E(278, 254, 6, 5, fill=CROC_DD + (255,))
+    bl = Image.new('RGBA', L.size, (0, 0, 0, 0)); bd = ImageDraw.Draw(bl)
+    for bx in (160, 340): bd.ellipse([(bx - 28) * S, 282 * S, (bx + 28) * S, 308 * S], fill=(255, 110, 140, 90))
+    L.alpha_composite(bl); d = ImageDraw.Draw(L)
+    # ince kıvrık bıyık (ağız çizgisinin hemen üstünde)
+    mx, my = 250, jy - 6
+    for sg in (-1, 1):
+        d.chord([(mx + sg * 4 - (54 if sg < 0 else 0)) * S, (my - 40) * S, (mx + sg * 4 + (54 if sg > 0 else 0)) * S, (my - 12) * S], 180, 360, fill=HAIR + (255,))
+        d.arc([(mx + sg * 50 - 13) * S, (my - 40) * S, (mx + sg * 50 + 13) * S, (my - 16) * S], (90 if sg > 0 else 270) - 120, (90 if sg > 0 else 270) + 60, fill=HAIR + (255,), width=5 * S)
+    if o == 0 and expr == 'smug':
+        d.arc([300 * S, (jy - 30) * S, 350 * S, (jy + 6) * S], 20, 110, fill=CROC_DD + (255,), width=6 * S)
+    if o == 0 and expr == 'kiss':
+        E(238, jy + 8, 16, 14, fill=(230, 40, 100, 255)); E(262, jy + 8, 16, 14, fill=(230, 40, 100, 255))
+        d.polygon([(224 * S, (jy + 12) * S), (276 * S, (jy + 12) * S), (250 * S, (jy + 36) * S)], fill=(230, 40, 100, 255))
+    return L.resize((500, 600), Image.LANCZOS)
+
+MASCOT = os.environ.get('AYKUT_MASCOT', 'classic')
+
 class Mouth:
     def __init__(self, env):
         m = env / (np.percentile(env, 92) + 1e-6)
@@ -332,7 +425,7 @@ def place_aykut(img, mouth, t, expr='sass', cx=270, cy=1480, scale=0.82, enter=1
     bob = 10 * mouth + 6 * math.sin(t * 2.2)
     rot = 4 * math.sin(t * 1.6) + 5 * mouth * math.sin(t * 9)
     look = (0.3 * math.sin(t * 0.9), -0.2)
-    im = aykut(mouth, blink_at(t), expr, look, t)
+    im = (aykut_croc if MASCOT == 'croc' else aykut)(mouth, blink_at(t), expr, look, t)
     paste_center(img, im, cx, cy - bob + (1 - enter) * 500, scale=scale, rot=rot)
 
 # ---------------- sahne / render ----------------
