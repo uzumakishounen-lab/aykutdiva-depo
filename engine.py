@@ -571,3 +571,17 @@ def mixdown(voice, scene_starts, seed=1):
     # öptüm parıltısı
     s = n - int(1.6 * SR); out[s:s + len(sp)] += sp[: n - s] * 1.2
     return out / max(1.0, np.abs(out).max() / 0.98)
+
+# ---------------- bulaşma dalgası (2026-11-27) ----------------
+def domino_emojis(img, t, t_in, before, after, n=5, cy=600, size=150, gap=0.35, x0=None, x1=None):
+    """Sıra hâlinde emojiler; soldan sağa tek tek 'before' → 'after' değişir (bulaşma/domino etkisi)."""
+    x0 = 130 if x0 is None else x0; x1 = W - 130 if x1 is None else x1
+    for k in range(n):
+        x = x0 + (x1 - x0) * k / max(1, n - 1)
+        p_in = ease_back(prog(t, t_in + k * 0.08, 0.35))
+        if p_in <= 0: continue
+        tk = t_in + 0.6 + k * gap
+        sw = prog(t, tk, 0.15)
+        ch = after if sw >= 1 else before
+        pop = 1 + 0.25 * math.sin(math.pi * prog(t, tk, 0.3))
+        draw_emoji(img, ch, x, cy + 10 * math.sin(t * 3 + k), size, scale=p_in * pop, rot=4 * math.sin(t * 2 + k))
