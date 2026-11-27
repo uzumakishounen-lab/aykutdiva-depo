@@ -636,3 +636,22 @@ def six_path(cx, cy, s=1.0, n=90):
         a = math.pi + 2 * math.pi * i / (n // 2)
         pts.append((cx + s * 95 * math.cos(a) , cy + s * (95 + 95 * math.sin(a) * -1) - s * 30))
     return pts
+
+
+def answer_bar(img, label, ans, cx, cy, t, t_in, color=PINK, fg=WHITE, w=760, h=96, size=54):
+    """Soldan dolan cevap çubuğu: '1' etiketi + dolan renkli bar + sonunda büyüyen cevap harfi."""
+    p = ease_out(prog(t, t_in, 0.5))
+    if p <= 0: return
+    d = ImageDraw.Draw(img)
+    x0, y0 = cx - w / 2, cy - h / 2
+    d.rounded_rectangle([x0, y0, x0 + w, y0 + h], h / 2, fill=(255, 255, 255, 60))
+    d.rounded_rectangle([x0, y0, x0 + max(h, w * p), y0 + h], h / 2, fill=color + (255,))
+    f = font(size, 'Black')
+    d.text((x0 + 34, cy - size * 0.62), label, font=f, fill=fg + (255,))
+    q = ease_back(prog(t, t_in + 0.45, 0.35))
+    if q > 0:
+        L = Image.new('RGBA', (h * 2, h * 2), (0, 0, 0, 0)); dd = ImageDraw.Draw(L)
+        dd.ellipse([0, 0, h * 2 - 1, h * 2 - 1], fill=WHITE + (255,))
+        f2 = font(int(size * 2.2), 'Black'); tw = text_w(ans, f2)
+        dd.text((h - tw / 2, h - size * 1.4), ans, font=f2, fill=color + (255,))
+        paste_center(img, L, x0 + w - h / 2 - 6, cy, scale=0.62 * q, rot=8 * math.sin(t * 3))
