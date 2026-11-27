@@ -6,3 +6,4 @@
 | 2026-11-26 | 16:00 | beyin yakan | Göz yanılması: Müller-Lyer çizgileri, Ebbinghaus daireleri | 18120691169452099 |
 | 2026-11-26 | 20:00 | seç bakalım |  fısıltı/bağırma, konfeti/alkış, şarkı/ayol | 18112049905909146 |
 | 2026-11-27 | 11:00 (11:01'de) | Neden…? | Esneme neden bulaşıcı (görme/duyma/okuma, empati, köpekler) | 18118840492830948 |
+| 2026-11-27 | 16:00 (16:01'de) | Bunu dene | Sağ ayağı saat yönünde çevirirken sağ elle havaya 6 yazma (ayak yön değiştirir) | 18123489721760151 |
