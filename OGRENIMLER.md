@@ -38,3 +38,4 @@ Bir format art arda 3 kez ortalamanın altında kalırsa alternatifine geç. Bir
 ## 4. Kendi verilerimizden
 (Her görev buraya tarihli, tek satırlık öğrenimler ekler.)
 - 2026-11-27: Göz yanılması (görsel test) en iyi tutunmayı verdi (3 sn geçme %55, ort. 11,8 sn); ilk karede görsel soru soran videolar düz bilgi girişinden daha iyi tutuyor. 11:00 videosu 12:35'te geç paylaşıldığı için 1 izlenmede kaldı → slot saatine uymak şart.
+- 2026-11-27 (16:00): 26 Kasım videolarında hâlâ 0 kaydetme, 1 paylaşım; izlenme ~180'de durdu. Göz yanılması (188) > seç bakalım (178), fark 2 kat değil → rotasyon korunuyor. Kaldıraç eksik: paylaşım; bu yüzden izleyiciyi denemeye ve sonucu yazmaya zorlayan 'Bunu dene' + kanca görseli (ilk karede el/ayak) deneniyor.

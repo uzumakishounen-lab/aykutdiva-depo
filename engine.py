@@ -585,3 +585,54 @@ def domino_emojis(img, t, t_in, before, after, n=5, cy=600, size=150, gap=0.35, 
         ch = after if sw >= 1 else before
         pop = 1 + 0.25 * math.sin(math.pi * prog(t, tk, 0.3))
         draw_emoji(img, ch, x, cy + 10 * math.sin(t * 3 + k), size, scale=p_in * pop, rot=4 * math.sin(t * 2 + k))
+
+def spin_ring(img, cx, cy, r, t, t_in, direction=1, speed=3.0, color=GOLD, width=16, flip_at=None):
+    """Dönen ok halkası (daire çizme hareketi). direction=1 saat yönü; flip_at verilirse o anda yön değiştirir."""
+    p = ease_back(prog(t, t_in, 0.35))
+    if p <= 0: return
+    S = 2; R = int(r * S); pad = 40 * S
+    L = Image.new('RGBA', (2 * R + 2 * pad, 2 * R + 2 * pad), (0, 0, 0, 0)); d = ImageDraw.Draw(L)
+    c = R + pad; tt = t - t_in
+    if flip_at is not None and t >= flip_at:
+        ang = direction * speed * (flip_at - t_in) - direction * speed * (t - flip_at)
+        dr = -direction
+    else:
+        ang = direction * speed * tt; dr = direction
+    a0 = math.degrees(ang)
+    d.ellipse([c - R, c - R, c + R, c + R], outline=color + (60,), width=width * S)
+    # 270 derecelik yay, ucunda ok başı (PIL açıları saat yönünde artar)
+    start, end = (a0, a0 + 270) if dr > 0 else (a0 - 270, a0)
+    d.arc([c - R, c - R, c + R, c + R], start, end, fill=color + (255,), width=width * S)
+    tip = math.radians(end if dr > 0 else start)
+    tx, ty = c + R * math.cos(tip), c + R * math.sin(tip)
+    tang = tip + (math.pi / 2 if dr > 0 else -math.pi / 2)
+    hl = 34 * S
+    pts = [(tx + hl * math.cos(tang), ty + hl * math.sin(tang)),
+           (tx + hl * 0.8 * math.cos(tip), ty + hl * 0.8 * math.sin(tip)),
+           (tx - hl * 0.8 * math.cos(tip), ty - hl * 0.8 * math.sin(tip))]
+    d.polygon(pts, fill=color + (255,))
+    L = L.resize((L.width // S, L.height // S), Image.LANCZOS)
+    paste_center(img, L, cx, cy, scale=p)
+
+def trace_path(img, pts, t, t_in, dur, color=PINK, width=22, glow=WHITE):
+    """Noktalar listesini zamanla çizer (havaya yazı yazma efekti); uçta parlayan nokta."""
+    k = prog(t, t_in, dur)
+    if k <= 0: return
+    n = max(2, int(len(pts) * k))
+    d = ImageDraw.Draw(img)
+    seg = pts[:n]
+    d.line(seg, fill=glow + (255,), width=width + 10, joint='curve')
+    d.line(seg, fill=color + (255,), width=width, joint='curve')
+    x, y = seg[-1]; r = width * 0.9
+    d.ellipse([x - r, y - r, x + r, y + r], fill=GOLD + (255,))
+
+def six_path(cx, cy, s=1.0, n=90):
+    """'6' rakamının yazılış yolu: üstten başlayan kavis + alttaki halka."""
+    pts = []
+    for i in range(n // 2):  # üstten aşağı sola kavis
+        u = i / (n // 2 - 1); a = math.pi * (-0.35 + 1.15 * u)
+        pts.append((cx + s * (40 + 120 * math.cos(a + math.pi / 2) * 0.9), cy + s * (-200 + 260 * u)))
+    for i in range(n // 2 + 1):  # alt halka
+        a = math.pi + 2 * math.pi * i / (n // 2)
+        pts.append((cx + s * 95 * math.cos(a) , cy + s * (95 + 95 * math.sin(a) * -1) - s * 30))
+    return pts

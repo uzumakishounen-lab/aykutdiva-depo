@@ -7,5 +7,5 @@ Skor = izlenme × (1 + 5·paylaşım/izlenme + 3·kaydetme/izlenme). Kaynak: Win
 | 2026-11-26 | 16:00 | beyin yakan | göz yanılması | 18120691169452099 | 188 | 159 | 11.8 | 54.7 | – | – | 0 | 0 | 188 |
 | 2026-11-26 | 20:00 | seç bakalım | fısıltı/konfeti/şarkı | 18112049905909146 | 178 | 143 | 10.4 | 45.8 | – | – | 0 | 0 | 178 |
 
-(2026-11-27 11:00 güncellemesi; beğeni/yorum Windsor'dan null döndü. 3 sn geçme % = 100 − skip rate.)
+(2026-11-27 11:00 ve 16:00 güncellemesi — 16:00'da Windsor aynı değerleri döndürdü, 11:00 videosu henüz veride yok; beğeni/yorum Windsor'dan null döndü. 3 sn geçme % = 100 − skip rate.)
 | 2026-11-27 | 11:00 | Neden…? | esneme bulaşıcı | 18118840492830948 | – | – | – | – | – | – | – | – | – |
